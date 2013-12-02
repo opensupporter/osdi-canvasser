@@ -11,6 +11,7 @@ var _sample = {
 var container = document.getElementById('container');
 var viewport = document.getElementById('viewport');
 
+/*
 $( "a" ).on( "click", function( event ){
 
   // Prevent the usual navigation behavior
@@ -25,7 +26,7 @@ $( "a" ).on( "click", function( event ){
 
  
 });
-
+*/
 //getPeople();
 
 $('#btnProcess').click(uploadForm);
