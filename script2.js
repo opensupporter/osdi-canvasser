@@ -7,9 +7,21 @@ var _sample = {
   last_name: 'Cohen',
   email: 'joshco@foobazio.com'
 }
+  var _ls = window.localStorage;
 
 var container = document.getElementById('container');
 var viewport = document.getElementById('viewport');
+
+$( document ).delegate("#localstore", "pageinit", function() {
+  showLocal();
+});
+
+if ( _ls['osdi_aep'] == undefined || _ls['osdi_aep'] == "") {
+  _ls['osdi_aep'] = 'http://api.opensupporter.org/api/v1';
+  console.log('Set empty aep to ' + _ls['osdi_aep']);
+}
+
+$('#osdi_server').val(_ls['osdi_aep']);
 
 /*
 $( "a" ).on( "click", function( event ){
@@ -29,9 +41,39 @@ $( "a" ).on( "click", function( event ){
 */
 //getPeople();
 
-$('#btnProcess').click(uploadForm);
-$('#btnSave').click(saveForm);
+// form buttons
+$('#btnProcess').click(function (event) {
+    event.preventDefault();
+    uploadForm();
+  });
 
+$('#btnReset').click(function (event) {
+  clearButton('#btnReset');
+  console.log('Clicked Reset');
+  });
+
+$('#btnSave').click(function (event) {
+    event.preventDefault();
+    console.log('Save Clicked')
+     if ( $('#email').val() == "" ) {
+    alert('Email must not be blank');
+    return null;
+  }
+  
+    saveForm();
+    clearButton('#btnSave');
+    $('#btnSave').parent().removeClass('ui-btn-active');
+  });
+
+// upload button
+$('#btnUpload').click(uploadPeople);
+$('#btnClearLocal').click(clearLocal);
+$('#btnUpdateServer').click(setServerAEP);
+$('.local-refresh').click(showLocal);
+
+function clearButton(btnStringId) {
+  $(btnStringId).parent().removeClass('ui-btn-active');
+}
 
 function doImage() {
 	var image= new Image();
@@ -57,15 +99,64 @@ function saveForm() {
     savePerson(p);
 }
 
+// people stuff
+
+function uploadPeople() {
+  $.mobile.loading( 'show' );
+  var resourceUrl = _ls['osdi_people_uri'];
+  var people = loadPeople();
+   for(var key in people) {
+      uploadPerson(people[key], resourceUrl);
+
+  }
+  $.mobile.loading( 'hide' );
+}
+
+function clearLocal() {
+  var r=confirm('Delete: Are you sure?');
+  if ( r == true) {
+    _ls.removeItem('people');  
+  }
+  
+
+}
+function showLocal() {
+  console.log('In showLocal');
+  $('#record-list').empty();
+  var people = loadPeople();
+  for(var key in people) {
+    console.log('Adding ' + key);
+    $('#record-list').append('<li>' + key + '</li>');
+    $('#record-list').listview('refresh'); 
+   // $('body').append(localStorage.getItem(key));
+  }
+
+}
+
+function loadPeople(){
+  var peopleRaw = _ls['people'];
+  if ( peopleRaw == "" || peopleRaw == undefined) {
+    // it's empty so send back an empty hash
+    return {};
+  }
+  var people = JSON.parse(peopleRaw);
+  return people;
+
+}
 function savePerson(p) {
-  var ls = window.localStorage;
-  var json=JSON.stringify(p);
-  ls[p.email] = json;
+  console.log(this);
+  var people = loadPeople();
+  people[p.email] = p;
+
+  var json=JSON.stringify(people);
+  _ls['people'] = json;
+  $('#btnReset').click();
 
 }
 
 function processForm() {
   var p={};
+
   p['first_name']=$('#first_name').val();
   p['last_name']=$('#last_name').val();
   p['email']=$('#email').val();
@@ -75,7 +166,43 @@ function processForm() {
 
 
 }
-function uploadPerson(person) {
+// Server stuff
+function setServerAEP() {
+  var aep = $('#osdi_server').val();
+  _ls['osdi_aep'] = aep;
+  var peopleUrl = getPeopleURI();
+  _ls['osdi_people_uri'] = peopleUrl;
+}
+
+function getPeopleURI() {
+
+  var aep=getAEP();
+
+  var peopleUrl = aep['_links']['people']['href'];
+  console.log('People URL: ' + peopleUrl);
+  return peopleUrl;
+}
+
+function getAEP() {
+  var response;
+
+   console.log('Get AEP');
+  var ajaxSettings = {
+    // The url to flickrs api
+    url: _ls['osdi_aep'],
+    async: false,
+    type: "GET",
+    // The function to execute when the api has finished loading
+    //success: apiSuccessOSDI,
+  };
+  // Pass all the settings to being fetching the data
+  response = $.ajax(ajaxSettings);
+  console.log(response);
+  var aep = JSON.parse(response.responseText);
+  return aep;
+
+}
+function uploadPerson(person, resourceUrl) {
   // serialize to JSON
   var json = JSON.stringify(person);
 
@@ -88,7 +215,7 @@ function uploadPerson(person) {
   console.log('Pre ajax');
   var ajaxSettings = {
     // The url to flickrs api
-    url: 'http://192.168.40.1:3000/api/v1/people/',
+    url: resourceUrl,
     // The format we want it in
     dataType: 'json',
     async: false,

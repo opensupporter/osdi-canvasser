@@ -9,24 +9,14 @@
 
 <div data-role="page" id="newrecord">
   <div data-role="content">
-    <a href="#localstore">Go to Page Two</a>
-     <p>I'm first in the source order so I'm shown as the page.</p>
-                <p>View internal page called <a href="#localstore">bar</a>
-                </p>Scratch pad
-                <p id='status'>Ready</p>
                 <div class="container">
                     <form id="myForm">First name:
                         <input type="text" id="first_name">Last name:
                         <input type="text" id="last_name">Email:
-                        <input type="text" id="email">Industry:
-                        <select id="industry">
-                            <option value="technology">Technology</option>
-                            <option value="finance">Finance</option>
-                            <option value="law">Law</option>
-                            <option value="medicine">Medicine</option>
-                        </select>
-                        <input id="btnProcess" type="button" value="Process Form">
+                        <input type="text" id="email">
                         <input id="btnSave" type="button" value="Save To Local Storage">
+                        <input id="btnReset" type="reset" value="Clear" />
+                        
                     </form>
                 </div>
   </div>
@@ -35,7 +25,9 @@
                         <ul>
                             <li><a href="#newrecord" class="ui-link">New Record</a>
                             </li>
-                            <li><a href="#localstore" class="ui-link">Local Store</a>
+                            <li><a href="#localstore" class="local-refresh ui-link">Local Store</a>
+                            </li>
+                            <li><a href="#upload" class="ui-link">Upload</a>
                             </li>
                         </ul>
                     </div>
@@ -46,14 +38,22 @@
 
 <div data-role="page" id="localstore">
   <div data-role="content">
-    <a href="#newrecord">Go to Page One</a>
+   
+    <div >
+        <ul id="record-list" data-role="listview">
+ 
+        </ul>
+    </div>
+
   </div>
    <div data-role="footer"   data-position="fixed">
                     <div data-role="navbar">
                         <ul>
                             <li><a href="#newrecord" class="ui-link">New Record</a>
                             </li>
-                            <li><a href="#localstore" class="ui-link">Local Store</a>
+                            <li><a href="#localstore" class="local-refresh ui-link">Local Store</a>
+                            </li>
+                            <li><a href="#upload" class="ui-link">Upload</a>
                             </li>
                         </ul>
                     </div>
@@ -62,6 +62,32 @@
                 <!-- /footer -->
 </div>
 
+<div data-role="page" id="upload">
+  <div data-role="content">
+    <a id='btnUpload' href="#" data-role="button">Upload</a>
+    <a id='btnClearLocal' href="#" data-role="button">Clear Local Store</a>
+    <p>OSDI Server AEP URL</p>
+    <form>
+    <input type="text" id="osdi_server">
+    <form>
+    <a id='btnUpdateServer' href="#" data-role="button">Update AEP</a>
+
+  </div>
+   <div data-role="footer"   data-position="fixed">
+                    <div data-role="navbar">
+                        <ul>
+                            <li><a href="#newrecord" class="ui-link">New Record</a>
+                            </li>
+                            <li><a href="#localstore" class="local-refresh ui-link">Local Store</a>
+                            </li>
+                            <li><a href="#upload" class="ui-link">Upload</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- /navbar -->
+                </div>
+                <!-- /footer -->
+</div>
 
     <script type='text/javascript' src='script2.js'></script>
 </body>
