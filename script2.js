@@ -18,7 +18,9 @@ $( document ).delegate("#localstore", "pageinit", function() {
 
 if ( _ls['osdi_aep'] == undefined || _ls['osdi_aep'] == "") {
   _ls['osdi_aep'] = 'http://api.opensupporter.org/api/v1';
-  console.log('Set empty aep to ' + _ls['osdi_aep']);
+  var uri = getPeopleURI();
+  _ls['osdi_people_uri'] = uri;
+  console.log('Set empty aep to ' + _ls['osdi_aep'] + ' PURI ' + uri);
 }
 
 $('#osdi_server').val(_ls['osdi_aep']);
@@ -172,6 +174,8 @@ function setServerAEP() {
   _ls['osdi_aep'] = aep;
   var peopleUrl = getPeopleURI();
   _ls['osdi_people_uri'] = peopleUrl;
+  console.log('Set AEP: ' + aep);
+  console.log('Set PRUI: ' + peopleUrl);
 }
 
 function getPeopleURI() {
