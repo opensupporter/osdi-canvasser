@@ -2,6 +2,7 @@ CACHE MANIFEST
 # comment 1sssssss
 # busy status indicator
 # warning
+# bigger nav, but not too big
 
 CACHE:
 index.html
