@@ -1,6 +1,7 @@
 CACHE MANIFEST
 # comment 1sssssss
 # busy status indicator
+# warning
 
 CACHE:
 index.html

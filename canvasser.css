@@ -1,0 +1,15 @@
+/* canvasser.css */
+
+#warning {
+	text-align: center;
+	font-size: large;
+}
+
+.mynav  .ui-btn-inner {
+	height: 50px;
+
+}
+
+.mynav .ui-btn-text {
+	font-size: 18px;
+}
