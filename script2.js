@@ -103,16 +103,30 @@ function saveForm() {
 }
 
 // people stuff
-
 function uploadPeople() {
-  $.mobile.loading( 'show' );
+  busy(true);
+  window.setTimeout( uploadPeopleInner, 100);
+}
+
+function busy(yes) {
+  if ( yes ) {
+    $('#status').html('<span style="color: red">Busy Working...</span>');
+  } else {
+    $('#status').html('Ready...');
+  }
+}
+
+function uploadPeopleInner() {
+  
+
+  
   var resourceUrl = _ls['osdi_people_uri'];
   var people = loadPeople();
    for(var key in people) {
       uploadPerson(people[key], resourceUrl);
 
   }
-  $.mobile.loading( 'hide' );
+  busy(false);
 }
 
 function clearLocal() {
@@ -177,7 +191,7 @@ function setServerAEP() {
   _ls['osdi_people_uri'] = peopleUrl;
   console.log('Set AEP: ' + aep);
   console.log('Set PRUI: ' + peopleUrl);
-  
+
   $('#osdi_server').val(_ls['osdi_aep']);
   $('#people_uri').text(_ls['osdi_people_uri']);
 }
@@ -217,7 +231,7 @@ function uploadPerson(person, resourceUrl) {
   var response
 
   // busy on
-  setBusy(true);
+ 
   // do POST to server synchronous
   // Settings to pass to jquery to fetch the data
   console.log('Pre ajax');
@@ -236,7 +250,7 @@ function uploadPerson(person, resourceUrl) {
   response = $.ajax(ajaxSettings);
   console.log(response);
   // busy off
-  setBusy(false);
+
 
 }
 function apiSuccessOSDI(data) {
