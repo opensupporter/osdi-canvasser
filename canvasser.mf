@@ -2,6 +2,11 @@ CACHE MANIFEST
 
 CACHE:
 index.html
+res/jquery.mobile-1.3.2.min.css
+res/jquery-1.9.1.min.js
+res/jquery.mobile-1.3.2.min.js
+script2.js
+
 # comment 1sss
 
 NETWORK:
