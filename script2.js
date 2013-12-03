@@ -24,6 +24,7 @@ if ( _ls['osdi_aep'] == undefined || _ls['osdi_aep'] == "") {
 }
 
 $('#osdi_server').val(_ls['osdi_aep']);
+$('#people_uri').text(_ls['osdi_people_uri']);
 
 /*
 $( "a" ).on( "click", function( event ){
@@ -176,6 +177,9 @@ function setServerAEP() {
   _ls['osdi_people_uri'] = peopleUrl;
   console.log('Set AEP: ' + aep);
   console.log('Set PRUI: ' + peopleUrl);
+  
+  $('#osdi_server').val(_ls['osdi_aep']);
+  $('#people_uri').text(_ls['osdi_people_uri']);
 }
 
 function getPeopleURI() {
