@@ -1,3 +1,7 @@
 CACHE MANIFEST
 index.html
 # comment 1sss
+
+NETWORK
+*
+
