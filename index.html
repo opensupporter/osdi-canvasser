@@ -15,7 +15,20 @@
                     <form id="myForm">First name:
                         <input type="text" id="first_name">Last name:
                         <input type="text" id="last_name">Email:
-                        <input type="text" id="email">
+                        <input type="text" id="email">Phone:
+		      <input type="text" id="phone_number">OK to SMS?
+		      <select name="flip-1" id="sms_permission" data-role="slider">
+				 <option value="false">Off</option>
+				 <option value="true">On</option>
+		      </select> <br/>
+		      Address
+		      <input type="text" id="address1">Address2
+		      <input type="text" id="address2">City
+		      <input type="text" id="city">State
+		      <input type="text" id="state">ZIP
+		      <input type="text" id="postal_code">
+		      
+					    
                         <input id="btnSave" type="button" value="Save To Local Storage">
                         <input id="btnReset" type="reset" value="Clear" />
                         
@@ -95,6 +108,6 @@
 </div>
 
 
-    <script type='text/javascript' src='script2.js'></script>
+    <script type='text/javascript' src='osdi.js'></script>
 </body>
 </html>

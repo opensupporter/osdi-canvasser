@@ -143,7 +143,8 @@ function showLocal() {
   var people = loadPeople();
   for(var key in people) {
     console.log('Adding ' + key);
-    $('#record-list').append('<li>' + key + '</li>');
+    var fn = people[key]['first_name'] + ' ' + people[key]['last_name'];
+    $('#record-list').append('<li>' + fn + ' &lt;' + key + '&gt;</li>');
     $('#record-list').listview('refresh'); 
    // $('body').append(localStorage.getItem(key));
   }
@@ -177,6 +178,23 @@ function processForm() {
   p['first_name']=$('#first_name').val();
   p['last_name']=$('#last_name').val();
   p['email']=$('#email').val();
+  p['phone_numbers'] = [];
+  p['phone_numbers'][0] = {
+    'number' : $('#phone_number').val(),
+    'sms_permission' : $('#sms_permission').val()
+  }
+  
+  var a={
+    "address1": $('#address1').val(),
+    "address2": $('#address2').val(),
+    "city": $('#city').val(),
+    "state": $('#state').val(),
+    "postal_code": $('#postal_code').val()
+  }
+  p['_embedded'] = {
+    "addresses" : [ a ]
+  }
+  
   console.log('Generated person ');
   console.log(p);
   return p;
