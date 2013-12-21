@@ -25,6 +25,7 @@ if ( _ls['osdi_aep'] == undefined || _ls['osdi_aep'] == "") {
 
 $('#osdi_server').val(_ls['osdi_aep']);
 $('#people_uri').text(_ls['osdi_people_uri']);
+$('#logo').attr('src',_ls['brand_logo']);
 
 /*
 $( "a" ).on( "click", function( event ){
@@ -212,6 +213,7 @@ function setServerAEP() {
 
   $('#osdi_server').val(_ls['osdi_aep']);
   $('#people_uri').text(_ls['osdi_people_uri']);
+  $('#logo').attr('src',_ls['brand_logo']);
 }
 
 function getPeopleURI() {
@@ -220,6 +222,8 @@ function getPeopleURI() {
 
   var peopleUrl = aep['_links']['people']['href'];
   console.log('People URL: ' + peopleUrl);
+  _ls['brand_logo'] = aep['_links']['acme:brand_logo']['href'];
+  
   return peopleUrl;
 }
 

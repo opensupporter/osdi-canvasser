@@ -5,6 +5,7 @@ CACHE MANIFEST
 # bigger nav, but not too big
 # added address and phone
 # rename script to osdi.js
+# add branding logo
 
 CACHE:
 index.html
