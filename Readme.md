@@ -20,15 +20,15 @@ It defaults to our api.opensupporter.org.  So you can play with the app and then
 
 ## New Record
 This is where you enter new records
-![](/docimage/new_record.jpg)
+![](docimage/new_record.jpg)
 
 ## Local Store
 Displays records stored locally on device
 
-![](/docimage/local_store.jpg)
+![](docimage/local_store.jpg)
 
 ## Upload
 Controls for interacting with the server.  You can click upload to send to the OSDI AEP configured
 
-![](/docimage/upload.jpg)
+![](docimage/upload.jpg)
 
