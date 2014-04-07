@@ -1,11 +1,7 @@
 # OSDI Canvasser
 
-I've written (cobbled together) an HTML5 offline canvassing application.  It requires Chrome to work correctly. (especially on IOS)
- 
-Live Version
+Canvasser is an HTML5 offline canvassing application.  It currently requires Chrome to work correctly. 
 
-> http://canvasser.opensupporter.org
- 
 It lets you work offline and enter new people into the local storage on the device.  When you are ready (and back in network coverage, you can then upload your local data to the OSDI server).
  
 You can configure it to speak to a specific OSDI server.  You just give it the OSDI AEP.
@@ -15,6 +11,10 @@ You can configure it to speak to a specific OSDI server.  You just give it the O
 It then downloads the AEP and finds the person collection URI.
 
 It defaults to our api.opensupporter.org.  So you can play with the app and then see your new uploads on the API server.
+
+Live Version
+
+> http://canvasser.opensupporter.org
 
 # Screens
 
