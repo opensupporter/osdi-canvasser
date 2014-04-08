@@ -7,7 +7,10 @@ var _sample = {
   last_name: 'Cohen',
   email: 'joshco@foobazio.com'
 }
-  var _ls = window.localStorage;
+
+var _ls = window.localStorage;
+var _counter_idx;
+var _counter_count;
 
 var container = document.getElementById('container');
 var viewport = document.getElementById('viewport');
@@ -106,7 +109,8 @@ function saveForm() {
 // people stuff
 function uploadPeople() {
   busy(true);
-  window.setTimeout( uploadPeopleInner, 100);
+  window.setTimeout( processUploads, 100);
+
 }
 
 function busy(yes) {
@@ -117,18 +121,63 @@ function busy(yes) {
   }
 }
 
+function counter(idx,count) {
+  $('#counter').html( idx + ' / ' + count);
+}
+
+function clearCounter() {
+  $('#counter').html('');
+}
 function uploadPeopleInner() {
   
+
 
   
   var resourceUrl = _ls['osdi_people_uri'];
   var people = loadPeople();
+  _counter_count = countObjectProperties(people);
+  _counter_idx = 0;
+
    for(var key in people) {
-      uploadPerson(people[key], resourceUrl);
+      _counter_idx++;
+      counter(_counter_idx,_counter_count);
+      window.setTimeout(function () {
+        uploadPerson(people[key], resourceUrl)}, 300);
 
   }
   busy(false);
 }
+
+function processUploads() {
+  var resourceUrl = _ls['osdi_people_uri'];
+  var people = loadPeople();
+  var kys = Object.keys(people);
+  var mykey;
+  _counter_count = countObjectProperties(people);
+  _counter_idx = 0;
+  console.log("Preparing to upload " + _counter_count + " items");
+  function doChunk() {
+    mykey=kys[_counter_idx];
+    console.log("Processing " + mykey + " idx " + _counter_idx);
+
+    counter(_counter_idx +1 ,_counter_count);
+    uploadPerson(people[mykey],resourceUrl);
+    _counter_idx++;
+
+    if (_counter_idx < _counter_count) {
+      setTimeout(doChunk,100);
+    } else {
+      busy(false)
+      clearCounter();
+    }
+
+  }
+  doChunk();
+
+ //  busy(false);
+
+}
+
 
 function clearLocal() {
   var r=confirm('Delete: Are you sure?');
@@ -339,6 +388,17 @@ function getPeople(){
   };
   // Pass all the settings to being fetching the data
   $.ajax(ajaxSettings);
+}
+
+// count of items in an object
+function countObjectProperties(obj)
+{
+    var count = 0;
+    for(var i in obj)
+        if(obj.hasOwnProperty(i))
+            count++;
+
+    return count;
 }
 
 // app cache stuff
