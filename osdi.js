@@ -1,3 +1,16 @@
+// TODO 
+// addresses are now inline
+// restructure data 
+//    person->data
+//    person->tags ['tag','tag']
+//    person->self
+//    person->tags
+// detect if not chrome and alert
+// add tagging support
+// misc refactoring
+//
+// deal with non-json error response? or fix on server to always report json
+
 "use strict";
 
 var _data;
@@ -19,8 +32,13 @@ $( document ).delegate("#localstore", "pageinit", function() {
   showLocal();
 });
 
+var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
+if ( ! is_chrome ) {
+  alert('Please use Chrome');
+}
+
 if ( _ls['osdi_aep'] == undefined || _ls['osdi_aep'] == "") {
-  _ls['osdi_aep'] = 'http://api.opensupporter.org/api/v1';
+  _ls['osdi_aep'] = $('#osdi_server').val();
   var uri = getPeopleURI();
   _ls['osdi_people_uri'] = uri;
   console.log('Set empty aep to ' + _ls['osdi_aep'] + ' PURI ' + uri);
@@ -64,12 +82,15 @@ $('#btnSave').click(function (event) {
     console.log('Save Clicked')
      if ( $('#email').val() == "" ) {
     alert('Email must not be blank');
-    return null;
+   
+  } else {
+      saveForm();
   }
   
-    saveForm();
-    clearButton('#btnSave');
-    $('#btnSave').parent().removeClass('ui-btn-active');
+      setTimeout(function() {
+      clearButton('#btnSave')
+    },100);
+  
   });
 
 // upload button
@@ -109,6 +130,7 @@ function saveForm() {
 // people stuff
 function uploadPeople() {
   busy(true);
+  $.mobile.loading('show');
   window.setTimeout( processUploads, 100);
 
 }
@@ -162,6 +184,7 @@ function processUploads() {
 
     counter(_counter_idx +1 ,_counter_count);
     uploadPerson(people[mykey],resourceUrl);
+    tagPerson(people[mykey]);
     _counter_idx++;
 
     if (_counter_idx < _counter_count) {
@@ -169,6 +192,7 @@ function processUploads() {
     } else {
       busy(false)
       clearCounter();
+      $.mobile.loading('hide');
     }
 
   }
@@ -193,7 +217,7 @@ function showLocal() {
   var people = loadPeople();
   for(var key in people) {
     console.log('Adding ' + key);
-    var fn = people[key]['first_name'] + ' ' + people[key]['last_name'];
+    var fn = people[key]['data']['given_name'] + ' ' + people[key]['data']['family_name'];
     $('#record-list').append('<li>' + fn + ' &lt;' + key + '&gt;</li>');
     $('#record-list').listview('refresh'); 
    // $('body').append(localStorage.getItem(key));
@@ -211,10 +235,23 @@ function loadPeople(){
   return people;
 
 }
+
+function loadPerson(email){
+  var peopleRaw = _ls['people'];
+  if ( peopleRaw == "" || peopleRaw == undefined) {
+    // it's empty so send back an empty hash
+    return {};
+  }
+  var people = JSON.parse(peopleRaw);
+  return people[email];
+
+}
+
 function savePerson(p) {
   console.log(this);
   var people = loadPeople();
-  people[p.email] = p;
+  var email = p.data.email_addresses[0].address;
+  people[email] = p;
 
   var json=JSON.stringify(people);
   _ls['people'] = json;
@@ -223,11 +260,20 @@ function savePerson(p) {
 }
 
 function processForm() {
-  var p={};
+  var q={};
+  q['data'] = {};
+  var p = q['data'];
+  q['tags'] = []
+  var tags = q['tags'];
 
-  p['first_name']=$('#first_name').val();
-  p['last_name']=$('#last_name').val();
-  p['email']=$('#email').val();
+
+  p['given_name']=$('#first_name').val();
+  p['family_name']=$('#last_name').val();
+  p['email_addresses']= [ { 
+      "address" : $('#email').val(),
+      "primary" : true
+    }];
+
   p['phone_numbers'] = [];
   p['phone_numbers'][0] = {
     'number' : $('#phone_number').val(),
@@ -235,19 +281,27 @@ function processForm() {
   }
   
   var a={
-    "address1": $('#address1').val(),
-    "address2": $('#address2').val(),
-    "city": $('#city').val(),
-    "state": $('#state').val(),
+    "address_lines": [ $('#address1').val(),$('#address2').val() ],
+    "locality": $('#city').val(),
+    "region": $('#state').val(),
     "postal_code": $('#postal_code').val()
   }
-  p['_embedded'] = {
-    "addresses" : [ a ]
-  }
+  p['postal_addresses'] = [ a ];
   
+  // // handle checkboxes for tags
+  // if ( $('#volunteer').prop('checked') ){
+  //   tags.push('volunteer');
+  // }
+  $( ".tags" ).each(function() {
+    if ( $( this ).prop('checked') ) {
+     tags.push( $(this).val() ); 
+    }
+    
+  });
+
   console.log('Generated person ');
-  console.log(p);
-  return p;
+  console.log(q);
+  return q;
 
 
 }
@@ -297,16 +351,62 @@ function getAEP() {
 }
 function uploadPerson(person, resourceUrl) {
   // serialize to JSON
-  var json = JSON.stringify(person);
+  var json = JSON.stringify(person['data']);
 
-  var response
-
+  var response;
+  var response_json;
   // busy on
  
   // do POST to server synchronous
   // Settings to pass to jquery to fetch the data
-  console.log('Pre ajax');
-  var ajaxSettings = {
+  console.log('Saving person ' + personEmail(person));
+ 
+  response = exec_ajax(json,resourceUrl);
+
+  response_json = response.responseText;
+  person['save_response'] = response_json;
+  savePerson(person);
+  console.log(response);
+  // busy off
+
+
+}
+
+function tagPerson(person) {
+  var save_response=JSON.parse(person['save_response']);
+
+  var tagUrl =save_response['_links']['osdi:tags']['href'];
+  var json;
+
+  person['tags'].map( function (tagName) {
+    console.log ("Tagging [" + tagName + "] " + personEmail(person) );
+    tagObject(tagName,tagUrl);
+
+  });
+
+  
+}
+
+function personEmail(person) {
+  var pe = person['data']['email_addresses'][0]['address'];
+  return pe;
+}
+function tagObject(tagName, tagUrl) {
+  var tagHash = { 
+    "name" : tagName
+  };
+
+  var json = JSON.stringify(tagHash);
+
+  var response = exec_ajax(json,tagUrl);
+
+
+}
+
+function exec_ajax(json,resourceUrl) {
+  var response;
+
+   var ajaxSettings = {
     // The url to flickrs api
     url: resourceUrl,
     // The format we want it in
@@ -319,11 +419,10 @@ function uploadPerson(person, resourceUrl) {
   };
   // Pass all the settings to being fetching the data
   response = $.ajax(ajaxSettings);
-  console.log(response);
-  // busy off
-
-
+  console.log(response.status + ' POST ' + resourceUrl );
+  return response;
 }
+
 function apiSuccessOSDI(data) {
 	_data=data;
   _people = _data['_embedded']['people'];
@@ -417,3 +516,4 @@ window.addEventListener('load', function(e) {
   }, false);
 
 }, false);
+

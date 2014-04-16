@@ -6,10 +6,13 @@
 }
 
 .mynav  .ui-btn-inner {
-	height: 30px;
+	height: 20px;
 
 }
 
+.ui-block-a {
+	padding-right: 5px;
+}
 #logo {
 	text-align: center;
 }
