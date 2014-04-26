@@ -32,21 +32,27 @@ $( document ).delegate("#localstore", "pageinit", function() {
   showLocal();
 });
 
-var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
-if ( ! is_chrome ) {
-  alert('Please use Chrome');
-}
+$( document ).ready(function() {
+    console.log( "ready!" );
+    var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
+    if ( ! is_chrome ) {
+      alert('Please use Chrome');
+    }
+    setServerAEP();
+});
 
-if ( _ls['osdi_aep'] == undefined || _ls['osdi_aep'] == "") {
-  _ls['osdi_aep'] = $('#osdi_server').val();
-  var uri = getPeopleURI();
-  _ls['osdi_people_uri'] = uri;
-  console.log('Set empty aep to ' + _ls['osdi_aep'] + ' PURI ' + uri);
-}
 
-$('#osdi_server').val(_ls['osdi_aep']);
-$('#people_uri').text(_ls['osdi_people_uri']);
-$('#logo').attr('src',_ls['brand_logo']);
+
+// if ( _ls['osdi_aep'] == undefined || _ls['osdi_aep'] == "") {
+//   _ls['osdi_aep'] = $('#osdi_server').val();
+//   var uri = getPeopleURI();
+//   _ls['osdi_people_uri'] = uri;
+//   console.log('Set empty aep to ' + _ls['osdi_aep'] + ' PURI ' + uri);
+// }
+
+// $('#osdi_server').val(_ls['osdi_aep']);
+// $('#people_uri').text(_ls['osdi_people_uri']);
+// $('#logo').attr('src',_ls['brand_logo']);
 
 /*
 $( "a" ).on( "click", function( event ){
@@ -79,13 +85,15 @@ $('#btnReset').click(function (event) {
 
 $('#btnSave').click(function (event) {
     event.preventDefault();
-    console.log('Save Clicked')
-     if ( $('#email').val() == "" ) {
-    alert('Email must not be blank');
+    console.log('Save Clicked');
+
+    // we need to allow blank email.
+  //    if ( $('#email').val() == "" ) {
+  //   alert('Email must not be blank');
    
-  } else {
+  // } else {
       saveForm();
-  }
+  // }
   
       setTimeout(function() {
       clearButton('#btnSave')
@@ -250,8 +258,17 @@ function loadPerson(email){
 function savePerson(p) {
   console.log(this);
   var people = loadPeople();
-  var email = p.data.email_addresses[0].address;
-  people[email] = p;
+  var email = p.data.email_addresses[0].address
+  var hkey;
+
+  var name = p.data.given_name + p.data.family_name;
+  if (email) {
+    hkey=email;
+   } else {
+      hkey = name;
+   }
+
+  people[hkey] = p;
 
   var json=JSON.stringify(people);
   _ls['people'] = json;
@@ -312,8 +329,7 @@ function setServerAEP() {
   var peopleUrl = getPeopleURI();
   _ls['osdi_people_uri'] = peopleUrl;
   console.log('Set AEP: ' + aep);
-  console.log('Set PRUI: ' + peopleUrl);
-
+  
   $('#osdi_server').val(_ls['osdi_aep']);
   $('#people_uri').text(_ls['osdi_people_uri']);
   $('#logo').attr('src',_ls['brand_logo']);
@@ -516,4 +532,3 @@ window.addEventListener('load', function(e) {
   }, false);
 
 }, false);
-
