@@ -89,9 +89,15 @@
     <form>
     <input type="text" id="osdi_server" value="http://az-osdi.herokuapp.com/api/v1">
     </form>
-        <p id='people_uri'></p>
+        <p >people_uri: <span id='people_uri'></span></p>
+        <p >person_signup_uri: <span id='person_signup_uri'></span> </p>
+         <p>brand_logo: <span id='logo_uri'></span></p>
+         <p>loggger_uri: <span id='logger_uri'></span></p>
     <a id='btnUpdateServer' href="#" data-role="button">Update AEP</a>
 
+<label><input type="checkbox" name="checkbox-0" id="auto_clean" value="auto_clean">Clean on Upload</label>
+<label><input type="checkbox" name="checkbox-0" id="always_log" value="always_log" checked="true">Always Log</label>
+<a id='btnPostProcess' href="#" data-role="button">Post Process</a>
   </div>
    <div data-role="footer"   data-position="fixed">
                     <div class="mynav" data-role="navbar">
@@ -111,7 +117,7 @@
 <div data-role="page" id="logger">
     <div data-role="content">
   <b>Logging</b>
-</div>
+    </div>
 </div>
 <div data-role="page" id="browser-warning">
   <h1>Please switch to Chrome</h1>

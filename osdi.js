@@ -38,10 +38,28 @@ $( document ).ready(function() {
     if ( ! is_chrome ) {
       alert('Please use Chrome');
     }
-    setServerAEP();
+    if (_ls['osdi_aep'] == undefined || _ls['osdi_aep'] == "") {
+        setServerAEP();
+      } else {
+        updateServerUI();
+      }
+  
 });
 
-
+function updateServerUI() {
+    $('#osdi_server').val(_ls['osdi_aep']);
+    $('#people_uri').text(_ls['osdi_people_uri']);
+    $('#logger_uri').text(_ls['logger_uri']);
+    $('#logo').attr('src',_ls['brand_logo']);
+    $('#person_signup_uri').text(_ls['person_signup_uri']);
+    $('#logo_uri').text(_ls['brand_logo']);
+    if ( present(_ls['brand_logo'])) {
+     $('#logo').attr('src',_ls['brand_logo']);
+    } else {
+     $('#logo').attr('src',null);
+    }
+    
+}
 
 // if ( _ls['osdi_aep'] == undefined || _ls['osdi_aep'] == "") {
 //   _ls['osdi_aep'] = $('#osdi_server').val();
@@ -105,6 +123,7 @@ $('#btnSave').click(function (event) {
 $('#btnUpload').click(uploadPeople);
 $('#btnClearLocal').click(clearLocal);
 $('#btnUpdateServer').click(setServerAEP);
+$('#btnPostProcess').click(postProcess);
 $('.local-refresh').click(showLocal);
 
 function clearButton(btnStringId) {
@@ -158,6 +177,75 @@ function counter(idx,count) {
 function clearCounter() {
   $('#counter').html('');
 }
+
+function verifyUpload(prune) {
+  var people=loadPeople();
+  var status;
+  _ls['failures'] = 0;
+  var failures = 0;
+
+  for (var key in people) {
+    status = people[key]['status_code']
+
+    if (status != 200) {
+      // there was an error
+      console.log("Error " + status + " uploading " + key);
+      failures++
+      } else {
+      if (prune == true) {
+        console.log("OK to remove " + key);
+        deletePerson(key);
+      }
+    }
+  }
+  _ls['failures'] = failures;
+  return failures
+}
+
+function uploadLogs(logger_uri,status) {
+  var json = JSON.stringify(_ls);
+  var res=exec_ajax(json,logger_uri + "?status=" + status);
+  return res;
+}
+
+function postProcess() {
+  // are there failures?
+  var failures = verifyUpload(false);
+  var res;
+  var msgs = [];
+
+  if ( present(_ls['logger_uri'])) {
+     // upload logs
+    if ( failures > 0 ) {
+      msgs.push("There were " + failures + "errors, logs uploaded");
+      res=uploadLogs(_ls['logger_uri'],901);
+    } else if ( $("#always_log").prop('checked') ) {
+      msgs.push("No errors but always log is checked")
+      res=uploadLogs(_ls['logger_uri'],900);
+    }
+
+    if ( res.status == 200 ) {
+      // logs uploaded successfully
+      if ( $("#auto_clean").prop('checked') ) {
+        //clean
+        msgs.push('Clearing local store')
+        clearLocal();
+
+      }  
+    }
+    
+
+  } else {
+    // no logging so just prune
+    verifyUpload(true);
+
+  }
+ 
+
+  alert(msgs.join('\n'));
+   
+}
+
 function uploadPeopleInner() {
   
 
@@ -179,7 +267,7 @@ function uploadPeopleInner() {
 }
 
 function processUploads() {
-  var resourceUrl = _ls['osdi_people_uri'];
+  var resourceUrl = _ls['person_signup_uri'];
   var people = loadPeople();
   var kys = Object.keys(people);
   var mykey;
@@ -192,7 +280,7 @@ function processUploads() {
 
     counter(_counter_idx +1 ,_counter_count);
     uploadPerson(people[mykey],resourceUrl);
-    tagPerson(people[mykey]);
+    //tagPerson(people[mykey]);
     _counter_idx++;
 
     if (_counter_idx < _counter_count) {
@@ -214,11 +302,15 @@ function processUploads() {
 function clearLocal() {
   var r=confirm('Delete: Are you sure?');
   if ( r == true) {
-    _ls.removeItem('people');  
+    clearLocalInner();  
   }
   
 
 }
+function clearLocalInner() {
+      _ls.removeItem('people');  
+  }
+
 function showLocal() {
   console.log('In showLocal');
   $('#record-list').empty();
@@ -255,6 +347,15 @@ function loadPerson(email){
 
 }
 
+function deletePerson(key) {
+   
+  var people = loadPeople();
+  delete people[key]
+  var json=JSON.stringify(people);
+  _ls['people'] = json;
+
+}
+
 function savePerson(p) {
   console.log(this);
   var people = loadPeople();
@@ -280,8 +381,9 @@ function processForm() {
   var q={};
   q['data'] = {};
   var p = q['data'];
-  q['tags'] = []
-  var tags = q['tags'];
+  p['add_tags'] = []
+  
+  var tags = p['add_tags'];
 
 
   p['given_name']=$('#first_name').val();
@@ -330,20 +432,53 @@ function setServerAEP() {
   _ls['osdi_people_uri'] = peopleUrl;
   console.log('Set AEP: ' + aep);
   
-  $('#osdi_server').val(_ls['osdi_aep']);
-  $('#people_uri').text(_ls['osdi_people_uri']);
-  $('#logo').attr('src',_ls['brand_logo']);
+  updateServerUI();
+}
+
+function nav(obj, expression) {
+  var ret=undefined;
+
+  try {
+    ret = eval(expression);
+  } catch (e) {
+    ret = undefined;
+  }
+  return ret;
+}
+function present(obj) {
+  if ( obj != undefined && obj != null && obj != ""
+    && obj != "undefined" && obj != "null"){
+    return true;
+
+  } else {
+    return false;
+  }
 }
 
 function getPeopleURI() {
 
   var aep=getAEP();
 
-  var peopleUrl = aep['_links']['people']['href'];
-  console.log('People URL: ' + peopleUrl);
-  _ls['brand_logo'] = aep['_links']['acme:brand_logo']['href'];
+  var peopleUrl = aep['_links']['osdi:people']['href'];
+  console.log('People URL: ' + peopleUrl);  
+  _ls['person_signup_uri'] = aep['_links']['osdi:person_signup']['href'];
   
+  // optional
+  _ls['brand_logo'] = nav(aep,"obj['_links']['acme:brand_logo']['href']" ) ;
+  _ls['logger_uri'] = nav(aep, "obj['_links']['acme:logger']['href']" ) ;
+  console.log("Got here");
+
+
   return peopleUrl;
+}
+
+function getOSDILinkURI(rel) {
+
+  var aep=getAEP();
+
+  var linkUri = aep['_links'][rel]['href'];
+   
+  return linkUri;
 }
 
 function getAEP() {
@@ -381,6 +516,9 @@ function uploadPerson(person, resourceUrl) {
 
   response_json = response.responseText;
   person['save_response'] = response_json;
+  person['status_code'] = response.status;
+  person['request_id'] = response.getResponseHeader('OSDI-Request-ID');
+
   savePerson(person);
   console.log(response);
   // busy off
