@@ -16,8 +16,9 @@ osdi.js
 canvasser.css
 favicon.ico
 res/images/ajax-loader.gif
-
-
+canvasser-hero.png
+res/jquery-ui-1.10.4.custom.min.js
+res/jquery-ui-1.10.4.custom.min.css
 
 
 NETWORK:

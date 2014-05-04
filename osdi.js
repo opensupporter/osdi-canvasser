@@ -43,6 +43,7 @@ $( document ).ready(function() {
       } else {
         updateServerUI();
       }
+    swizzleCounter();
   
 });
 
@@ -98,6 +99,7 @@ $('#btnProcess').click(function (event) {
 
 $('#btnReset').click(function (event) {
   clearButton('#btnReset');
+  $("#myForm")[0].reset()
   console.log('Clicked Reset');
   });
 
@@ -113,12 +115,18 @@ $('#btnSave').click(function (event) {
       saveForm();
   // }
   
-      setTimeout(function() {
-      clearButton('#btnSave')
-    },100);
+  swizzleCounter();
   
   });
 
+function showSavedScreen() {
+
+    window.location = '#saved';
+
+      setTimeout(function() {
+      window.location = '#newrecord';
+    },1000);
+}
 // upload button
 $('#btnUpload').click(uploadPeople);
 $('#btnClearLocal').click(clearLocal);
@@ -156,6 +164,11 @@ function saveForm() {
 
 // people stuff
 function uploadPeople() {
+  var _counter_count = countPeople();
+   if ( _counter_count == 0 ) {
+    alert('No records to upload!');
+    return;
+  }
   busy(true);
   $.mobile.loading('show');
   window.setTimeout( processUploads, 100);
@@ -176,6 +189,22 @@ function counter(idx,count) {
 
 function clearCounter() {
   $('#counter').html('');
+}
+
+function countPeople() {
+  var people=loadPeople();
+  var count = Object.keys(people).length;
+
+  return count;
+}
+
+function updateCounter() {
+  var count = countPeople();
+  $(".store-count").text( "(" + count + ")");
+}
+function swizzleCounter() {
+  updateCounter();
+  $(".store-count").effect("pulsate",{times:4},1000)
 }
 
 function verifyUpload(prune) {
@@ -242,7 +271,8 @@ function postProcess() {
   }
  
 
-  alert(msgs.join('\n'));
+  $("#log-messages").text(msgs.join("<br/"));
+  window.location = "#logger";
    
 }
 
@@ -272,6 +302,7 @@ function processUploads() {
   var kys = Object.keys(people);
   var mykey;
   _counter_count = countObjectProperties(people);
+
   _counter_idx = 0;
   console.log("Preparing to upload " + _counter_count + " items");
   function doChunk() {
@@ -288,6 +319,7 @@ function processUploads() {
     } else {
       busy(false)
       clearCounter();
+      postProcess();
       $.mobile.loading('hide');
     }
 
@@ -309,6 +341,7 @@ function clearLocal() {
 }
 function clearLocalInner() {
       _ls.removeItem('people');  
+      updateCounter();
   }
 
 function showLocal() {
