@@ -248,10 +248,10 @@ function postProcess() {
   if ( present(_ls['logger_uri'])) {
      // upload logs
     if ( failures > 0 ) {
-      msgs.push("There were " + failures + "errors, logs uploaded");
+      msgs.push("There were " + failures + " errors, logs uploaded");
       res=uploadLogs(_ls['logger_uri'],901);
     } else if ( $("#always_log").prop('checked') ) {
-      msgs.push("No errors but always log is checked")
+      msgs.push("No errors.  Logging transmitted")
       res=uploadLogs(_ls['logger_uri'],900);
     }
 

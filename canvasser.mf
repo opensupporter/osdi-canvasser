@@ -19,7 +19,8 @@ res/images/ajax-loader.gif
 canvasser-hero.png
 res/jquery-ui-1.10.4.custom.min.js
 res/jquery-ui-1.10.4.custom.min.css
-
+res/jqm142/jquery.mobile-1.4.2.min.js
+res/jqm142/jquery.mobile-1.4.2.min.css
 
 NETWORK:
 *
