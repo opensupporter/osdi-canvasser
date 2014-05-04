@@ -36,7 +36,7 @@ $( document ).ready(function() {
     console.log( "ready!" );
     var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
     if ( ! is_chrome ) {
-      alert('Please use Chrome');
+    //  alert('Please use Chrome');
     }
     if (_ls['osdi_aep'] == undefined || _ls['osdi_aep'] == "") {
         setServerAEP();
@@ -98,7 +98,7 @@ $('#btnProcess').click(function (event) {
   });
 
 $('#btnReset').click(function (event) {
-  clearButton('#btnReset');
+ // clearButton('#btnReset');
   $("#myForm")[0].reset()
   console.log('Clicked Reset');
   });
@@ -344,7 +344,7 @@ function clearLocal() {
 }
 function clearLocalInner() {
       _ls.removeItem('people');  
-      updateCounter();
+      swizzleCounter();
   }
 
 function showLocal() {
