@@ -130,7 +130,7 @@ function showSavedScreen() {
 // upload button
 $('#btnUpload').click(uploadPeople);
 $('#btnClearLocal').click(clearLocal);
-$('#btnUpdateServer').click(setServerAEP);
+$('#btnUpdateServer').click(setServerAEPUI);
 $('#btnPostProcess').click(postProcess);
 $('.local-refresh').click(showLocal);
 
@@ -170,7 +170,7 @@ function uploadPeople() {
     return;
   }
   busy(true);
-  $.mobile.loading('show');
+ 
   window.setTimeout( processUploads, 100);
 
 }
@@ -178,8 +178,10 @@ function uploadPeople() {
 function busy(yes) {
   if ( yes ) {
     $('#status').html('<span style="color: red">Busy Working...</span>');
+     $.mobile.loading('show');
   } else {
     $('#status').html('Ready...');
+    $.mobile.loading('hide');
   }
 }
 
@@ -317,10 +319,11 @@ function processUploads() {
     if (_counter_idx < _counter_count) {
       setTimeout(doChunk,100);
     } else {
-      busy(false)
+     
       clearCounter();
       postProcess();
-      $.mobile.loading('hide');
+      busy(false)
+      
     }
 
   }
@@ -458,7 +461,13 @@ function processForm() {
 
 }
 // Server stuff
+function setServerAEPUI() {
+  busy(true);
+  setTimeout(setServerAEP,300);
+}
+
 function setServerAEP() {
+ 
   var aep = $('#osdi_server').val();
   _ls['osdi_aep'] = aep;
   var peopleUrl = getPeopleURI();
@@ -466,6 +475,7 @@ function setServerAEP() {
   console.log('Set AEP: ' + aep);
   
   updateServerUI();
+  busy(false);
 }
 
 function nav(obj, expression) {
