@@ -170,6 +170,10 @@ function uploadPeople() {
     alert('No records to upload!');
     return;
   }
+  if ( ! present(_ls['person_signup_uri'])) {
+    alert('Invalid OSDI Server. Update AEP');
+    return;
+  }
   busy(true);
  
   window.setTimeout( processUploads, 100);
@@ -507,8 +511,16 @@ function getPeopleURI() {
 
   var peopleUrl = aep['_links']['osdi:people']['href'];
   console.log('People URL: ' + peopleUrl);  
-  _ls['person_signup_uri'] = aep['_links']['osdi:person_signup']['href'];
-  
+  try {
+     _ls['person_signup_uri'] = aep['_links']['osdi:person_signup']['href'];
+  } catch (e) {
+    alert("Cannot find OSDI Server");
+  }
+ 
+  if ( ! present(_ls['person_signup_uri'])) {
+    alert('Invalid OSDI Server');
+  }
+
   // optional
   _ls['brand_logo'] = nav(aep,"obj['_links']['acme:brand_logo']['href']" ) ;
   _ls['logger_uri'] = nav(aep, "obj['_links']['acme:logger']['href']" ) ;

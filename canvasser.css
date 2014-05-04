@@ -5,8 +5,8 @@
 	font-size: large;
 }
 
-.mynav  .ui-btn-inner {
-	height: 20px;
+.mynav {
+	height: 40px;
 
 }
 
@@ -16,4 +16,3 @@
 #logo {
 	text-align: center;
 }
-

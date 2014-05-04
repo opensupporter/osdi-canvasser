@@ -1,4 +1,4 @@
-<html manifest="canvasser.mf">
+<html manifest="canvasserx.mf">
 <head>
     <meta name="viewport" content="width=device-width"> 
     <link rel="stylesheet" href="res/jquery-ui-1.10.4.custom.min.css"/>
@@ -88,23 +88,17 @@
 <div data-role="page" id="upload">
   <div data-role="content">
     <p><img id="logo"></p>
-    version 0123<br/>
     <a id='btnUpload' href="#" data-role="button">Upload</a>
     <h3> <span id='status'>Ready...</span><span id='counter'></span></h3>
     <a id='btnClearLocal' href="#" data-role="button">Clear Local Store</a>
     <p>OSDI Server AEP URL</p>
     <form>
-    <input type="text" id="osdi_server" value="http://az-osdi.herokuapp.com/api/v1">
+    <input type="text" id="osdi_server" value="http://az-osdi.herokuapp.com/proxy">
     </form>
-        <p >people_uri: <span id='people_uri'></span></p>
-        <p >person_signup_uri: <span id='person_signup_uri'></span> </p>
-         <p>brand_logo: <span id='logo_uri'></span></p>
-         <p>loggger_uri: <span id='logger_uri'></span></p>
+        
     <a id='btnUpdateServer' href="#" data-role="button">Update AEP</a>
+    <a id='btnGoNerds' href="#nerds" data-role="button">Nerd Settings</a>
 
-<label><input type="checkbox" name="checkbox-0" id="auto_clean" value="auto_clean">Clean on Upload</label>
-<label><input type="checkbox" name="checkbox-0" id="always_log" value="always_log" checked="true">Always Log</label>
-<a id='btnPostProcess' href="#" data-role="button">Post Process</a>
   </div>
    <div data-role="footer"   data-position="fixed">
                     <div class="mynav" data-role="navbar">
@@ -135,6 +129,21 @@
     <div data-role="content">
   <h1>Saved!</h1>
   <img src="canvasser-hero.png">
+    </div>
+</div>
+<div data-role="page" id="nerds">
+    <div data-role="content">
+  <h1>Nerdy Settings</h1>
+  <p >people_uri: <span id='people_uri'></span></p>
+    <p >person_signup_uri: <span id='person_signup_uri'></span> </p>
+     <p>brand_logo: <span id='logo_uri'></span></p>
+     <p>loggger_uri: <span id='logger_uri'></span></p>
+     <label><input type="checkbox" name="checkbox-0" id="auto_clean" value="auto_clean">Clean on Upload</label>
+    <label><input type="checkbox" name="checkbox-0" id="always_log" value="always_log" checked="true">Always Log</label>
+    <a id='btnPostProcess' href="#" data-role="button">Post Process</a>
+<a id='btnExitNerds' href="#upload"  data-role="button">Back to Uploads</a>
+
+    <img src="canvasser-hero.png">
     </div>
 </div>
 <div data-role="page" id="browser-warning">
