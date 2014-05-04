@@ -261,7 +261,7 @@ function postProcess() {
       if ( $("#auto_clean").prop('checked') ) {
         //clean
         msgs.push('Clearing local store')
-        clearLocal();
+        clearLocalInner();
 
       }  
     } else {
@@ -276,7 +276,7 @@ function postProcess() {
   }
  
 
-  $("#log-messages").text(msgs.join("<br/"));
+  $("#log-messages").text(msgs.join("<br/>"));
   window.location = "#logger";
    
 }
