@@ -263,6 +263,8 @@ function postProcess() {
         clearLocal();
 
       }  
+    } else {
+      msgs.push('Could not send logs!')
     }
     
 
