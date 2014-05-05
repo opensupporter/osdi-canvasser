@@ -115,10 +115,20 @@ $('#btnSave').click(function (event) {
   // } else {
       saveForm();
   // }
-  
+  saveConfirmation();
   swizzleCounter();
   
   });
+
+function saveConfirmation() {
+  if ( $('#save_confirmation').prop('checked')) {
+    $.mobile.changePage('#saved');
+    setTimeout(function() { 
+      $.mobile.changePage('#newrecord');
+    },1000);
+
+  }
+}
 
 function showSavedScreen() {
 
