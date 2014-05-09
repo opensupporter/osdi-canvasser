@@ -113,10 +113,14 @@ $('#btnSave').click(function (event) {
   //   alert('Email must not be blank');
    
   // } else {
-      saveForm();
-  // }
-  saveConfirmation();
+      if ( saveForm() != null ) {
+         saveConfirmation();
   swizzleCounter();
+    } else {
+    alert("Missing Required Fields");
+    }
+  // }
+ 
   
   });
 
@@ -170,7 +174,12 @@ function uploadForm() {
 
 function saveForm() {
     var p=processForm();
-    savePerson(p);
+    if ( p != null ) {
+      savePerson(p);
+
+    } 
+      
+    return p;
 }
 
 // people stuff
@@ -431,6 +440,13 @@ function savePerson(p) {
 }
 
 function processForm() {
+  if ( ! present($('#first_name').val())
+   && !present($('#last_name').val())
+   && ! present($('#email').val())
+   ) {
+    return null;
+  }
+    
   var q={};
   q['data'] = {};
   var p = q['data'];
