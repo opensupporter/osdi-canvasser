@@ -502,7 +502,7 @@ function setServerAEPUI() {
   } else {
     _ls['canvasser_email'] =  $('#canvasser_email').val();
   }
-  
+
   busy(true);
   setTimeout(setServerAEP,300);
 }
@@ -546,7 +546,7 @@ function getPeopleURI() {
   var peopleUrl = aep['_links']['osdi:people']['href'];
   console.log('People URL: ' + peopleUrl);  
   try {
-     _ls['person_signup_uri'] = aep['_links']['osdi:person_signup']['href'];
+     _ls['person_signup_uri'] = aep['_links']['osdi:person_signup_helper']['href'];
   } catch (e) {
     alert("Cannot find OSDI Server");
   }
@@ -556,8 +556,8 @@ function getPeopleURI() {
   }
 
   // optional
-  _ls['brand_logo'] = nav(aep,"obj['_links']['acme:brand_logo']['href']" ) ;
-  _ls['logger_uri'] = nav(aep, "obj['_links']['acme:logger']['href']" ) ;
+  _ls['brand_logo'] = nav(aep,"obj['_links']['canvasser:brand_logo']['href']" ) ;
+  _ls['logger_uri'] = nav(aep, "obj['_links']['canvasser:logger']['href']" ) ;
   console.log("Got here");
 
 
