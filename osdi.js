@@ -60,6 +60,7 @@ function updateServerUI() {
     } else {
      $('#logo').attr('src',null);
     }
+    $('#canvasser_email').val(_ls['canvasser_email']);
     
 }
 
@@ -495,6 +496,13 @@ function processForm() {
 }
 // Server stuff
 function setServerAEPUI() {
+  if ( ! present( $('#canvasser_email').val() )) {
+    alert("Please enter canvasser email");
+    return;
+  } else {
+    _ls['canvasser_email'] =  $('#canvasser_email').val();
+  }
+  
   busy(true);
   setTimeout(setServerAEP,300);
 }
