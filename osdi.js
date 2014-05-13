@@ -268,7 +268,7 @@ function verifyUpload(prune) {
 
 function uploadLogs(logger_uri,status) {
   var json = JSON.stringify(_ls);
-  var res=exec_ajax(json,logger_uri + "?status=" + status);
+  var res=exec_ajax(json,logger_uri + "?status=" + status + "&email=" + _ls['canvasser_email']);
   return res;
 }
 
