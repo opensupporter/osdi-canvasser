@@ -101,6 +101,12 @@ $('#btnProcess').click(function (event) {
     uploadForm();
   });
 
+$('#btnDefaultAEP').click(function (event) {
+  $("#osdi_server").val("https://az-osdi.herokuapp.com/proxy/salsa");
+  setServerAEPUI();
+ 
+  });
+
 $('#btnReset').click(function (event) {
  // clearButton('#btnReset');
   $("#myForm")[0].reset()
