@@ -26,10 +26,10 @@ var _ls = window.localStorage;
 var _counter_idx;
 var _counter_count;
 
+osdiLogClear();
+
 var container = document.getElementById('container');
 var viewport = document.getElementById('viewport');
-
-var log_messages = [];
 
 $( document ).delegate("#localstore", "pageinit", function() {
   showLocal();
@@ -137,6 +137,12 @@ function saveConfirmation() {
   }
 }
 
+function showLogs()
+{
+  $("#log-messages").html( osdiLogMessages().join("<br/>"));
+  $.mobile.changePage('#logger');
+}
+
 function showSavedScreen() {
 
     window.location = '#saved';
@@ -149,7 +155,7 @@ function showSavedScreen() {
 $('#btnUpload').click(uploadPeople);
 $('#btnClearLocal').click(clearLocal);
 $('#btnUpdateServer').click(setServerAEPUI);
-$('#btnPostProcess').click(postProcess);
+$('#btnShowLogs').click(showLogs);
 $('.local-refresh').click(showLocal);
 
 function clearButton(btnStringId) {
@@ -288,6 +294,7 @@ function postProcess() {
         //clean
         msgs.push('Clearing local store')
         clearLocalInner();
+        osdiLogClear();
 
       }  
     } else {
@@ -301,8 +308,9 @@ function postProcess() {
 
   }
  
+  var log_messages = osdiLogMessages();
 
-  $("#log-messages").html(msgs.join("<br/>") +  "<br/>" + log_messages.join("<br/>"));
+  $("#log-messages").html(msgs.join("<br/>") +  "<br/><br/>" + log_messages.join("<br/>"));
   window.location = "#logger";
    
 }
@@ -629,8 +637,10 @@ function uploadPerson(person, resourceUrl) {
 
   savePerson(person);
   if ( response.status > 299) {
-    osdiLog("Upload error " + personEmail(person) + " status " + response.status);
+    osdiLog("Upload Error " + personEmail(person) + " status " + response.status);
     osdiLog(getOSDIStatus(response.responseText));
+  } else {
+    osdiLog("Upload Success " + personEmail(person) + " status " + response.status);
   }
   console.log(response);
   // busy off
@@ -766,9 +776,22 @@ function countObjectProperties(obj)
     return count;
 }
 
-function osdiLog(msg) {
+function osdiLog(msg) 
+{
   console.log(msg);
+  var log_messages = JSON.parse(_ls['log_messages']);
   log_messages.push(msg);
+  _ls['log_messages']= JSON.stringify(log_messages);
+}
+
+function osdiLogClear()
+{
+  _ls['log_messages'] = "[]";
+}
+
+function osdiLogMessages() {
+  var log_messages = JSON.parse(_ls['log_messages']);
+  return log_messages;
 }
 
 // app cache stuff
