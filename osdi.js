@@ -29,12 +29,14 @@ var _counter_count;
 var container = document.getElementById('container');
 var viewport = document.getElementById('viewport');
 
+var log_messages = [];
+
 $( document ).delegate("#localstore", "pageinit", function() {
   showLocal();
 });
 
 $( document ).ready(function() {
-    console.log( "ready!" );
+    console.log( "Document Ready!" );
     var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
     if ( ! is_chrome ) {
     //  alert('Please use Chrome');
@@ -68,7 +70,7 @@ function updateServerUI() {
 //   _ls['osdi_aep'] = $('#osdi_server').val();
 //   var uri = getPeopleURI();
 //   _ls['osdi_people_uri'] = uri;
-//   console.log('Set empty aep to ' + _ls['osdi_aep'] + ' PURI ' + uri);
+//   osdiLog('Set empty aep to ' + _ls['osdi_aep'] + ' PURI ' + uri);
 // }
 
 // $('#osdi_server').val(_ls['osdi_aep']);
@@ -83,7 +85,7 @@ $( "a" ).on( "click", function( event ){
 
   // grab new URL
   var newUrl = $(this).attr( "href" );
-  console.log('going to ' + newUrl);
+  osdiLog('going to ' + newUrl);
   // Alter the url according to the anchor's href attribute, and
   // store the data-foo attribute information with the url
   $.mobile.navigate( newUrl );
@@ -245,11 +247,11 @@ function verifyUpload(prune) {
 
     if (status != 200) {
       // there was an error
-      console.log("Error " + status + " uploading " + key);
+      osdiLog("Error " + status + " uploading " + key);
       failures++
       } else {
       if (prune == true) {
-        console.log("OK to remove " + key);
+        osdiLog("OK to remove " + key);
         deletePerson(key);
       }
     }
@@ -300,7 +302,7 @@ function postProcess() {
   }
  
 
-  $("#log-messages").text(msgs.join("<br/>"));
+  $("#log-messages").html(msgs.join("<br/>") +  "<br/>" + log_messages.join("<br/>"));
   window.location = "#logger";
    
 }
@@ -333,10 +335,10 @@ function processUploads() {
   _counter_count = countObjectProperties(people);
 
   _counter_idx = 0;
-  console.log("Preparing to upload " + _counter_count + " items");
+  osdiLog("Preparing to upload " + _counter_count + " items");
   function doChunk() {
     mykey=kys[_counter_idx];
-    console.log("Processing " + mykey + " idx " + _counter_idx);
+    osdiLog("Processing " + mykey + " idx " + _counter_idx);
 
     counter(_counter_idx +1 ,_counter_count);
     uploadPerson(people[mykey],resourceUrl);
@@ -529,6 +531,20 @@ function nav(obj, expression) {
   }
   return ret;
 }
+
+function getOSDIStatus(json) {
+  var obj;
+  var str;
+  try {
+    obj = JSON.parse(json);
+    str = obj['osdi:status']['status'] + ' ' + obj['osdi:status']['description'];  
+  } catch (e) {
+    str = "Undetermined";
+  }
+  
+  return str;
+
+}
 function present(obj) {
   if ( obj != undefined && obj != null && obj != ""
     && obj != "undefined" && obj != "null"){
@@ -602,7 +618,7 @@ function uploadPerson(person, resourceUrl) {
  
   // do POST to server synchronous
   // Settings to pass to jquery to fetch the data
-  console.log('Saving person ' + personEmail(person));
+  osdiLog('Uploading person ' + personEmail(person));
  
   response = exec_ajax(json,resourceUrl);
 
@@ -612,6 +628,10 @@ function uploadPerson(person, resourceUrl) {
   person['request_id'] = response.getResponseHeader('OSDI-Request-ID');
 
   savePerson(person);
+  if ( response.status > 299) {
+    osdiLog("Upload error " + personEmail(person) + " status " + response.status);
+    osdiLog(getOSDIStatus(response.responseText));
+  }
   console.log(response);
   // busy off
 
@@ -744,6 +764,11 @@ function countObjectProperties(obj)
             count++;
 
     return count;
+}
+
+function osdiLog(msg) {
+  console.log(msg);
+  log_messages.push(msg);
 }
 
 // app cache stuff
