@@ -21,6 +21,7 @@ var _sample = {
   last_name: 'Cohen',
   email: 'joshco@foobazio.com'
 }
+var default_aep = "https://az-osdi.herokuapp.com/proxy/salsa"
 
 var _ls = window.localStorage;
 var _counter_idx;
@@ -42,6 +43,7 @@ $( document ).ready(function() {
     //  alert('Please use Chrome');
     }
     if (_ls['osdi_aep'] == undefined || _ls['osdi_aep'] == "") {
+        $("#osdi_server").val(default_aep);
         setServerAEP();
       } else {
         updateServerUI();
@@ -102,7 +104,7 @@ $('#btnProcess').click(function (event) {
   });
 
 $('#btnDefaultAEP').click(function (event) {
-  $("#osdi_server").val("https://az-osdi.herokuapp.com/proxy/salsa");
+  $("#osdi_server").val(default_aep);
   setServerAEPUI();
  
   });
