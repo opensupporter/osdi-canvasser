@@ -21,7 +21,27 @@ var _sample = {
   last_name: 'Cohen',
   email: 'joshco@foobazio.com'
 }
-var default_aep = "https://az-osdi.herokuapp.com/proxy/salsa"
+
+function selectDefaultAEP(){
+  var hostname = window.location.hostname;
+  var aep;
+
+  switch (hostname) {
+    case "canvasser.opensupporter.org":
+      aep="http://api.opensupporter.org/proxy/salsa";
+      break;
+    case "az-canvasser.opensupporter.org":
+      aep="https://az-osdi.herokuapp.com/proxy/salsa";
+      break;
+    case "localhost":
+      aep="http://localhost:3000/proxy/salsa";
+      break;
+    default:
+      aep="http://localhost:3000/proxy/salsa";
+
+  }
+  return aep;
+}
 
 var _ls = window.localStorage;
 var _counter_idx;
@@ -43,7 +63,7 @@ $( document ).ready(function() {
     //  alert('Please use Chrome');
     }
     if (_ls['osdi_aep'] == undefined || _ls['osdi_aep'] == "") {
-        $("#osdi_server").val(default_aep);
+        $("#osdi_server").val(selectDefaultAEP());
         setServerAEP();
       } else {
         updateServerUI();
@@ -104,7 +124,7 @@ $('#btnProcess').click(function (event) {
   });
 
 $('#btnDefaultAEP').click(function (event) {
-  $("#osdi_server").val(default_aep);
+  $("#osdi_server").val(selectDefaultAEP());
   setServerAEPUI();
  
   });
