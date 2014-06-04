@@ -129,6 +129,7 @@ $('#btnClearHTML5').click(function (event) {
     if (r==true) {
         localStorage.clear();
         alert("Cleared!");
+        $.mobile.changePage('#upload');
         window.location.reload();
     } 
     
