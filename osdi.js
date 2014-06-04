@@ -123,6 +123,17 @@ $('#btnProcess').click(function (event) {
     uploadForm();
   });
 
+$('#btnClearHTML5').click(function (event) {
+    event.preventDefault();
+    var r=confirm("Delete HTML5 Store?");
+    if (r==true) {
+        localStorage.clear();
+        alert("Cleared!");
+        window.location.reload();
+    } 
+    
+  });
+
 $('#btnDefaultAEP').click(function (event) {
   $("#osdi_server").val(selectDefaultAEP());
   setServerAEPUI();
