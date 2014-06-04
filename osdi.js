@@ -28,7 +28,7 @@ function selectDefaultAEP(){
 
   switch (hostname) {
     case "canvasser.opensupporter.org":
-      aep="http://api.opensupporter.org/proxy/salsa";
+      aep="http://demo.osdi.io/api/v1";
       break;
     case "az-canvasser.opensupporter.org":
       aep="https://az-osdi.herokuapp.com/proxy/salsa";
