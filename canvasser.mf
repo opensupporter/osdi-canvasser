@@ -6,7 +6,7 @@ CACHE MANIFEST
 # added address and phone
 # rename script to osdi.js
 # add branding logo
-# 201406044
+# 2014060445
 
 CACHE:
 index.html
