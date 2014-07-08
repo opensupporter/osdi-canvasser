@@ -74,6 +74,7 @@ $( document ).ready(function() {
 
 function updateServerUI() {
     $('#osdi_server').val(_ls['osdi_aep']);
+    $('#api_key').val(_ls['api_key']);
     $('#people_uri').text(_ls['osdi_people_uri']);
     $('#logger_uri').text(_ls['logger_uri']);
     $('#logo').attr('src',_ls['brand_logo']);
@@ -430,7 +431,7 @@ function showLocal() {
   var people = loadPeople();
   for(var key in people) {
     console.log('Adding ' + key);
-    var fn = people[key]['data']['given_name'] + ' ' + people[key]['data']['family_name'];
+    var fn = people[key]['data']['person']['given_name'] + ' ' + people[key]['data']['person']['family_name'];
     $('#record-list').append('<li>' + fn + ' &lt;' + key + '&gt;</li>');
     $('#record-list').listview('refresh'); 
    // $('body').append(localStorage.getItem(key));
@@ -472,7 +473,7 @@ function deletePerson(key) {
 function savePerson(p) {
   console.log(this);
   var people = loadPeople();
-  var email = p.data.email_addresses[0].address
+  var email = p.data.person.email_addresses[0].address
   var hkey;
 
   var name = p.data.given_name + p.data.family_name;
@@ -498,12 +499,14 @@ function processForm() {
     return null;
   }
     
-  var q={};
-  q['data'] = {};
-  var p = q['data'];
-  p['add_tags'] = []
+  var msg={};
+  msg['data'] = {};
+  var data = msg['data'];
+  data['add_tags'] = []
+  data['person'] = {};
   
-  var tags = p['add_tags'];
+  var tags = data['add_tags'];
+  var p = data['person'];
 
 
   p['given_name']=$('#first_name').val();
@@ -539,8 +542,8 @@ function processForm() {
   });
 
   console.log('Generated person ');
-  console.log(q);
-  return q;
+  console.log(msg);
+  return msg;
 
 
 }
@@ -552,6 +555,9 @@ function setServerAEPUI() {
   } else {
     _ls['canvasser_email'] =  $('#canvasser_email').val();
   }
+
+  // always save it so it can be cleared
+  _ls['api_key'] = $('#api_key').val();
 
   busy(true);
   setTimeout(setServerAEP,300);
@@ -607,7 +613,9 @@ function getPeopleURI() {
 
   var aep=getAEP();
 
-  var peopleUrl = aep['_links']['osdi:people']['href'];
+  var peopleUrl = nav(aep,"obj['_links']['osdi:people']['href']");
+
+  //aep['_links']['osdi:people']['href'];
   console.log('People URL: ' + peopleUrl);  
   try {
      _ls['person_signup_uri'] = aep['_links']['osdi:person_signup_helper']['href'];
@@ -640,15 +648,23 @@ function getOSDILinkURI(rel) {
 function getAEP() {
   var response;
 
-   console.log('Get AEP');
+  console.log('Get AEP');
+  var myheaders = {};
+
+  if (present(_ls['api_key']) ) {
+    myheaders['OSDI-API-Token'] = _ls['api_key'];
+  }
+
   var ajaxSettings = {
     // The url to flickrs api
     url: _ls['osdi_aep'],
     async: false,
     type: "GET",
+    headers: myheaders,
     // The function to execute when the api has finished loading
     //success: apiSuccessOSDI,
   };
+
   // Pass all the settings to being fetching the data
   response = $.ajax(ajaxSettings);
   console.log(response);
@@ -704,7 +720,7 @@ function tagPerson(person) {
 }
 
 function personEmail(person) {
-  var pe = person['data']['email_addresses'][0]['address'];
+  var pe = person['data']['person']['email_addresses'][0]['address'];
   return pe;
 }
 function tagObject(tagName, tagUrl) {
@@ -721,15 +737,22 @@ function tagObject(tagName, tagUrl) {
 
 function exec_ajax(json,resourceUrl) {
   var response;
+    var myheaders = {};
+
+  if (present(_ls['api_key']) ) {
+    myheaders['OSDI-API-Token'] = _ls['api_key'];
+  }
 
    var ajaxSettings = {
     // The url to flickrs api
     url: resourceUrl,
     // The format we want it in
     dataType: 'json',
+    contentType: "application/json; charset=utf-8",
     async: false,
     type: "POST",
     data: json,
+    headers: myheaders,
     // The function to execute when the api has finished loading
     //success: apiSuccessOSDI,
   };
@@ -820,7 +843,7 @@ function osdiLog(msg)
 {
   console.log(msg);
   var log_messages = JSON.parse(_ls['log_messages']);
-  log_messages.push(msg);
+  log_messages.unshift(msg);
   _ls['log_messages']= JSON.stringify(log_messages);
 }
 
