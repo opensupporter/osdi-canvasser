@@ -450,7 +450,7 @@ function loadPeople(){
 
 }
 
-function loadPerson(email){
+function xloadPerson(email){
   var peopleRaw = _ls['people'];
   if ( peopleRaw == "" || peopleRaw == undefined) {
     // it's empty so send back an empty hash
@@ -507,6 +507,7 @@ function processForm() {
   
   var tags = data['add_tags'];
   var p = data['person'];
+  data['originating_system'] = "canvasser.opensupporter.org";
 
 
   p['given_name']=$('#first_name').val();
