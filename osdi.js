@@ -57,7 +57,7 @@ $( document ).delegate("#localstore", "pageinit", function() {
 });
 
 $( document ).ready(function() {
-    console.log( "Document Ready!" );
+    consoleLog( "Document Ready!" );
     var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
     if ( ! is_chrome ) {
     //  alert('Please use Chrome');
@@ -145,12 +145,12 @@ $('#btnDefaultAEP').click(function (event) {
 $('#btnReset').click(function (event) {
  // clearButton('#btnReset');
   $("#myForm")[0].reset()
-  console.log('Clicked Reset');
+  consoleLog('Clicked Reset');
   });
 
 $('#btnSave').click(function (event) {
     event.preventDefault();
-    console.log('Save Clicked');
+    consoleLog('Save Clicked');
 
     // we need to allow blank email.
   //    if ( $('#email').val() == "" ) {
@@ -426,11 +426,11 @@ function clearLocalInner() {
   }
 
 function showLocal() {
-  console.log('In showLocal');
+  consoleLog('In showLocal');
   $('#record-list').empty();
   var people = loadPeople();
   for(var key in people) {
-    console.log('Adding ' + key);
+    consoleLog('Adding ' + key);
     var fn = people[key]['data']['person']['given_name'] + ' ' + people[key]['data']['person']['family_name'];
     $('#record-list').append('<li>' + fn + ' &lt;' + key + '&gt;</li>');
     $('#record-list').listview('refresh'); 
@@ -471,7 +471,7 @@ function deletePerson(key) {
 }
 
 function savePerson(p) {
-  console.log(this);
+  consoleLog(this);
   var people = loadPeople();
   var email = p.data.person.email_addresses[0].address
   var hkey;
@@ -542,8 +542,8 @@ function processForm() {
     
   });
 
-  console.log('Generated person ');
-  console.log(msg);
+  consoleLog('Generated person ');
+  consoleLog(msg);
   return msg;
 
 
@@ -570,7 +570,7 @@ function setServerAEP() {
   _ls['osdi_aep'] = aep;
   var peopleUrl = getPeopleURI();
   _ls['osdi_people_uri'] = peopleUrl;
-  console.log('Set AEP: ' + aep);
+  consoleLog('Set AEP: ' + aep);
   
   updateServerUI();
   busy(false);
@@ -617,7 +617,7 @@ function getPeopleURI() {
   var peopleUrl = nav(aep,"obj['_links']['osdi:people']['href']");
 
   //aep['_links']['osdi:people']['href'];
-  console.log('People URL: ' + peopleUrl);  
+  consoleLog('People URL: ' + peopleUrl);  
   try {
      _ls['person_signup_uri'] = aep['_links']['osdi:person_signup_helper']['href'];
   } catch (e) {
@@ -631,7 +631,7 @@ function getPeopleURI() {
   // optional
   _ls['brand_logo'] = nav(aep,"obj['_links']['canvasser:brand_logo']['href']" ) ;
   _ls['logger_uri'] = nav(aep, "obj['_links']['canvasser:logger']['href']" ) ;
-  console.log("Got here");
+  consoleLog("Got here");
 
 
   return peopleUrl;
@@ -649,7 +649,7 @@ function getOSDILinkURI(rel) {
 function getAEP() {
   var response;
 
-  console.log('Get AEP');
+  consoleLog('Get AEP');
   var myheaders = {};
 
   if (present(_ls['api_key']) ) {
@@ -668,7 +668,7 @@ function getAEP() {
 
   // Pass all the settings to being fetching the data
   response = $.ajax(ajaxSettings);
-  console.log(response);
+  consoleLog(response);
   var aep = JSON.parse(response.responseText);
   return aep;
 
@@ -699,7 +699,7 @@ function uploadPerson(person, resourceUrl) {
   } else {
     osdiLog("Upload Success " + personEmail(person) + " status " + response.status);
   }
-  console.log(response);
+  consoleLog(response);
   // busy off
 
 
@@ -712,7 +712,7 @@ function tagPerson(person) {
   var json;
 
   person['tags'].map( function (tagName) {
-    console.log ("Tagging [" + tagName + "] " + personEmail(person) );
+    consoleLog ("Tagging [" + tagName + "] " + personEmail(person) );
     tagObject(tagName,tagUrl);
 
   });
@@ -759,14 +759,14 @@ function exec_ajax(json,resourceUrl) {
   };
   // Pass all the settings to being fetching the data
   response = $.ajax(ajaxSettings);
-  console.log(response.status + ' POST ' + resourceUrl );
+  consoleLog(response.status + ' POST ' + resourceUrl );
   return response;
 }
 
 function apiSuccessOSDI(data) {
 	_data=data;
   _people = _data['_embedded']['people'];
-	console.log(data);
+	consoleLog(data);
   renderPeople(_people);
 
 }
@@ -795,7 +795,7 @@ function renderPeople(data) {
 
 	for (var i=0;i<data.length;i++) {
     var p=data[i];
-		console.log('Person: ' + p);
+		consoleLog('Person: ' + p);
     $('#people').append("<h2>" + p.first_name + ' ' + p.last_name + "</h2>");
     $('#people').append("<p>" + p.email + '</p>');
 	}
@@ -848,6 +848,11 @@ function osdiLog(msg)
   _ls['log_messages']= JSON.stringify(log_messages);
 }
 
+function consoleLog(msg)
+{
+  osdiLog(msg);
+
+}
 function osdiLogClear()
 {
   _ls['log_messages'] = "[]";
