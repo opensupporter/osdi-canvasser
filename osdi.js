@@ -331,7 +331,7 @@ function postProcess() {
 
     if ( res.status == 200 ) {
       // logs uploaded successfully
-      if ( $("#auto_clean").prop('checked') ) {
+      if ( $("#auto_clean").prop('checked') && failures == 0 ) {
         //clean
         msgs.push('Clearing local store')
         clearLocalInner();
@@ -339,6 +339,7 @@ function postProcess() {
 
       }  
     } else {
+
       msgs.push('Could not send logs!')
     }
     
