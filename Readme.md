@@ -4,7 +4,7 @@ Canvasser is an HTML5 offline canvassing application.  It currently requires Chr
 
 It lets you work offline and enter new people into the local storage on the device.  When you are ready (and back in network coverage, you can then upload your local data to the OSDI server).
  
-You can configure it to speak to a specific OSDI server.  You just give it the OSDI AEP.
+You can configure it to speak to a specific OSDI server.  You just give it the OSDI API Entry Point (AEP).
  
 > Eg: http://api.opensupporter.org/api/v1
  
